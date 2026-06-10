@@ -16,29 +16,8 @@ mongoose.connect(mongoURI).then(
 
 app.use(express.json())
 app.use("/students",studentRouter);
-app.post("/",(req,res)=>{
-   let newStudent= new Student({
-        name:req.body.name,
-        age:req.body.age,
-        city:req.body.city
-   })
-   newStudent.save().then(
-    ()=>{
-        console.log("Saved")
-        res.json({"message":"saved"})
-    }
-   ).catch((err)=>{
-        console.log(err.message)
-   })
-})
 
-app.get("/",(req,res)=>{
-    Student.find().then(
-        (result)=>{
-            console.log()
-        }
-    )
-})
+
 
 app.listen(3000,()=>{
     console.log("Server is started....")

@@ -1,9 +1,8 @@
 import express from 'express'
+import {getStudent} from '../controllers/studentController.js'
 
-const studentRouter = new express.Router();
+const studentRouter = express.Router();
 
-studentRouter.get("/",()=>{
-    console.log("get requesst for student received")
-})
+studentRouter.get("/",getStudent)
 
 export default studentRouter
