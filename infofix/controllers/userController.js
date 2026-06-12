@@ -1,16 +1,18 @@
 import User from '../modules/user.js'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+
 
 export async function createUser(req,res) {
 
     try{
 
-        
+        const passwordHash=bcrypt.hashSync(req.body.password,10)
         const newUser=new User({
             email : req.body.email,
             firstname : req.body.firstname,
             lastname : req.body.lastname,
-            password : req.body.password
+            password : passwordHash
         })
 
         await newUser.save()
@@ -29,13 +31,16 @@ export async function createUser(req,res) {
 
 
 export async function loginUser(req, res) {
+    let user
     try {
-        const user = await User.findOne({
+         user = await User.findOne({
             email:req.body.email
         })
     }
     catch(err){
-
+        res.json({
+            message:"something went wrong"
+        })
     }
 
     if (user==null){
@@ -44,6 +49,29 @@ export async function loginUser(req, res) {
         })
     }
     else{
+        const isValid=bcrypt.compareSync(req.body.password,user.password)
+        if (isValid){
+            
+        const payload={
+            email:user.email,
+            firstname:user.firstname,
+            lastname:user.lastname,
+            isAdmin:user.isAdmin,
+            isBlocked:user.isBlocked,
+            isEmailVerified:user.isEmailVerified
+        }
+
+
+        const token = jwt.sign(payload,"infofix")
+        console.log(token)
+        
+
+        res.json({
+            message:"login succesfull",
+            mewtoken:token
+                     })
+
+        }
         
     }
 }
