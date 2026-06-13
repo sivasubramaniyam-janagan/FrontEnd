@@ -17,7 +17,7 @@ export async function createUser(req,res) {
 
         await newUser.save()
 
-        res.json({
+        res.status(201).json({
             message : "user created succesfully"
         })
     }
@@ -44,8 +44,9 @@ export async function loginUser(req, res) {
     }
 
     if (user==null){
-        res.json({
+        res.status(404).json({
             message:"user not found"
+
         })
     }
     else{
@@ -62,10 +63,11 @@ export async function loginUser(req, res) {
         }
 
 
-        const token = jwt.sign(payload,"infofix")
+        const token = jwt.sign(payload, "infofix", {
+                 expiresIn: "1000000s"
+                });
         console.log(token)
-        
-
+    
         res.json({
             message:"login succesfull",
             mewtoken:token
@@ -73,5 +75,17 @@ export async function loginUser(req, res) {
 
         }
         
+    }
+}
+
+export function isAdmin(req){
+    if(req.user==null){
+        return false
+    }
+    if (req.user.isAdmin){
+        return true
+    }
+    else{
+        return false
     }
 }
