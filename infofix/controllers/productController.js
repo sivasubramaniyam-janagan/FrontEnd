@@ -136,3 +136,39 @@ export async function updateProduct(req,res) {
         })
     }
 }
+
+export async function getProductsById(req ,res){
+    try{
+        const product=await Product.findOne({
+            productId : req.params.productId
+        })
+
+        if (product==null){
+            res.json({
+                message : "Product not found"
+            })
+            return
+        }
+        else{
+            if (isAdmin(req)){
+                res.json(product)
+                return
+            }
+            else{
+                if(product.isAvailable){
+                    res.json(product)
+                     return
+                }
+                else{
+                     res.json({
+                     message : "Product not available"
+                     })
+                      return
+                }
+            }
+        }
+    }
+    catch(err){
+        res.status(500).json("Error founding product")
+    }
+}
